@@ -1,8 +1,8 @@
 game.tool.object.schemas.conversation = function(filler) {
     var template = {
-        over:       false,
         available:  function() { return true },
-        dialogue:   game.tool.list('dialogue')
+        dialogue:   game.tool.list('dialogue'),
+        index:      0
     };
     
     if(filler) {
@@ -14,7 +14,6 @@ game.tool.object.schemas.conversation = function(filler) {
 
 game.tool.object.schemas.dialogue = function(filler) {
     var template = {
-        spoken:     false,
         text:       '',
         responses:   game.tool.list('dialogue')
     };

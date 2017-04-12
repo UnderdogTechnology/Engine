@@ -76,7 +76,7 @@
     
     var tools = ['list', 'object'];
     
-    var something = ['conversation'];
+    var something = ['conversation', 'character'];
     
     load(tools, 'tools', load.bind(this, something, '', game.new));
 }());

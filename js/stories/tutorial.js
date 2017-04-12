@@ -46,4 +46,6 @@
     tutorial.characters.add(bob);
     
     game.data.story.add(tutorial);
+    
+    narrator.speak();
 }())

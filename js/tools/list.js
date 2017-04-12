@@ -17,7 +17,7 @@ game.tool.list = function(type, defaults, global) {
             if(isNaN(key)) continue;
             return ++key;
         }
-        return 1;
+        return 0;
     };
     
     list.count     = function() {
@@ -47,6 +47,15 @@ game.tool.list = function(type, defaults, global) {
             var match = true;
             for(var prop in o) {
                 if(!o.hasOwnProperty(prop) || !items[key].hasOwnProperty(prop)) continue;
+                
+                if(typeof items[key][prop] === 'function') {
+                    if(o[prop] != items[key][prop]()) {
+                        match = false;
+                        break;
+                    }
+                    continue;
+                }
+                
                 if(o[prop] != items[key][prop]) {
                     match = false;
                     break;
