@@ -1,14 +1,6 @@
-game.tool.list = function(type, defaults, global) {
-    
-    if(!game.tool.object.schemas[type]) return;
-    
-    var list = {
-        items:  {},
-        type:   type || ''
-    };
-    
-    list.next_id = function() {
-        var keys = Object.keys(list.items).sort(),
+(function(){
+    var next_id = function() {
+        var keys = Object.keys(this.items).sort(),
             i = keys.length - 1;
             
         while(i >= 0) {
@@ -20,27 +12,27 @@ game.tool.list = function(type, defaults, global) {
         return 0;
     };
     
-    list.count     = function() {
-        return Object.keys(list.items).length
+    var count = function() {
+        return Object.keys(this.items).length
     };
     
-    list.copy     = function() {
+    var copy = function() {
         // TODO: fix this shiiiiiiiit
-        if (null == list || "object" != typeof list) return game.tool.list(list.type);
-        var copy = game.tool.list(list.type);
+        if (null == this || "object" != typeof this) return game.tool.list(this.type);
+        var copy = game.tool.list(this.type);
         
-        if(Object.keys(list.items).length > 0) {
-            copy.items = Object.assign(list.items);
+        if(Object.keys(this.items).length > 0) {
+            copy.items = Object.assign(this.items);
         }
         
         return copy;
     };
     
-    list.find      = function(o) {
-        if(!o) return list;
+    var find = function(o) {
+        if(!o) return this;
         
         var found = {}
-            items = list.items;
+            items = this.items;
         
         for(var key in items) {
             if(!items.hasOwnProperty(key)) continue;
@@ -64,27 +56,28 @@ game.tool.list = function(type, defaults, global) {
             if(match) found[key] = Object.assign(items[key]);
         }
         
-        var out = list.copy();
+        var out = this.copy();
         
         out.items = found;
         
         return out;
-    }
-    list.add       = function(o, global, id, not_init) {
-        if(!o) return list;
+    };
+    
+    var add = function(o, global, id, not_init) {
+        if(!o) return this;
         
-        var found = list.find(o);
+        var found = this.find(o);
         
         if(found.count()) return;
         
-        var data = game.data[list.type],
+        var data = game.data[this.type],
             g_id;
         
         if(!data && global) {
-            data = game.data[list.type] = game.data[list.type] || tool.list(list.type);
+            data = game.data[this.type] = game.data[this.type] || game.tool.list(this.type);
         }
     
-        if(data && data != list) {
+        if(data && data != this) {
             if(o.id) {
                 found = data.find({id: o.id});
                 
@@ -97,31 +90,31 @@ game.tool.list = function(type, defaults, global) {
             }
         }
         
-        o = game.tool.object(list.type, o);
-        found = list.find(o);
+        o = game.tool.object(this.type, o);
+        found = this.find(o);
         if(found.count()) return;
         
-        id = id || list.next_id();
+        id = id || this.next_id();
         
         if(!o.id) {
             o.id = g_id || id;
         }
         
-        list.items[id] = o;
+        this.items[id] = o;
         
-        return list;
+        return this;
     };
     
-    list.remove    = function(o, global) {
-        if(!o) return list;
-        var found = list.find(o),
-            items = list.items;
+    var remove = function(o, global) {
+        if(!o) return this;
+        var found = this.find(o),
+            items = this.items;
         
         for(var key in found.items) {
             if(!found.items.hasOwnProperty(key) || !items.hasOwnProperty(key)) continue;
             
             if(global) {
-                var data    = game.data[list.type],
+                var data    = game.data[this.type],
                     id      = items[key].id;
                 
                 if(data && data.items && id) {
@@ -132,16 +125,32 @@ game.tool.list = function(type, defaults, global) {
             delete items[key];
         }
         
-        return list;
+        return this;
     };
-
-    for(var i in defaults) {
-        if(Array.isArray(defaults)) {
-            list.add(defaults[i], global);
-            continue;
-        }
-        list.add(defaults[i], global, i);
-    }
     
-    return list;
-}
+    game.tool.list = function(type, defaults, global) {
+    
+        if(!game.tool.object.schemas[type]) return;
+    
+        var list = {
+            next_id:    next_id,
+            count:      count,
+            copy:       copy,
+            find:       find,
+            add:        add,
+            remove:     remove,
+            items:      {},
+            type:       type || ''
+        };
+
+        for(var i in defaults) {
+            if(Array.isArray(defaults)) {
+                list.add(defaults[i], global);
+                continue;
+            }
+            list.add(defaults[i], global, i);
+        }
+        
+        return list;
+    }
+}());

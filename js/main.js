@@ -74,7 +74,7 @@
         }
     }
     
-    var tools = ['list', 'object'];
+    var tools = ['list2', 'object'];
     
     var something = ['conversation', 'character'];
     

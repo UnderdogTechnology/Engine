@@ -48,4 +48,5 @@
     game.data.story.add(tutorial);
     
     narrator.speak();
+    bob.speak();
 }())
