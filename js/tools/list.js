@@ -1,4 +1,7 @@
 game.tool.list = function(type, defaults, global) {
+    
+    if(!game.tool.object.schemas[type]) return;
+    
     var list = {
         items:  {},
         type:   type || ''
